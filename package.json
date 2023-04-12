@@ -1,7 +1,10 @@
 {
   "name": "mad-mini-backend",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/app.js",
+  "engines": {
+    "node": ">=14"
+  },
   "author": "Munavvar sinan k p",
   "license": "MIT",
   "scripts": {
