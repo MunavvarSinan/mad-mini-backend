@@ -30,15 +30,15 @@ export const getInternalDetails = async (req: Request, res: Response): Promise<v
 }
 
 export const getPreviousResults = async (req: Request, res: Response): Promise<void> => {
-    const { usn, semester } = req.body;
+    const { usn, semester, subject } = req.body;
 
     try {
         const previousResults = await InternalDetailsModel.aggregate([
             { $match: { usn: usn } },
             { $unwind: '$internalDetails' },
             { $match: { 'internalDetails.semester': semester } },
-            { $sort: { 'internalDetails.createdAt': 1 } },
-            { $group: { _id: '$_id', internalDetails: { $push: '$internalDetails' } } }
+            { $group: { _id: '$internalDetails.internal', internals: { $push: '$internalDetails' } } },
+            { $sort: { '_id': 1 } }
         ]);
 
         if (previousResults.length === 0) {
@@ -46,7 +46,28 @@ export const getPreviousResults = async (req: Request, res: Response): Promise<v
             return;
         }
 
-        res.status(200).json(previousResults[0].internalDetails);
+        let subjectResults = [];
+
+        for (const result of previousResults) {
+            const filteredSubjects = result.internals[0].subjects.filter(sub => sub.name === subject);
+            if (filteredSubjects.length > 0) {
+                const subjectResult = {
+                    internal: result._id,
+                    name:filteredSubjects[0].name,
+                    marks: filteredSubjects[0].marks,
+                    classes: filteredSubjects[0].classes,
+                    attendance: filteredSubjects[0].attendance
+                };
+                subjectResults.push(subjectResult);
+            }
+        }
+
+        if (subjectResults.length === 0) {
+            res.status(404).send(`No internal details found for the subject ${subject} in the given usn and semester`);
+            return;
+        }
+
+        res.status(200).json(subjectResults);
     } catch (err) {
         console.error(err);
         res.status(500).json({ message: 'Internal server error' });

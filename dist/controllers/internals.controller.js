@@ -39,20 +39,38 @@ const getInternalDetails = (req, res) => __awaiter(void 0, void 0, void 0, funct
 });
 exports.getInternalDetails = getInternalDetails;
 const getPreviousResults = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
-    const { usn, semester } = req.body;
+    const { usn, semester, subject } = req.body;
     try {
         const previousResults = yield internalDetails_model_1.default.aggregate([
             { $match: { usn: usn } },
             { $unwind: '$internalDetails' },
             { $match: { 'internalDetails.semester': semester } },
-            { $sort: { 'internalDetails.createdAt': 1 } },
-            { $group: { _id: '$_id', internalDetails: { $push: '$internalDetails' } } }
+            { $group: { _id: '$internalDetails.internal', internals: { $push: '$internalDetails' } } },
+            { $sort: { '_id': 1 } }
         ]);
         if (previousResults.length === 0) {
             res.status(404).send('No internal details found for the given usn and semester');
             return;
         }
-        res.status(200).json(previousResults[0].internalDetails);
+        let subjectResults = [];
+        for (const result of previousResults) {
+            const filteredSubjects = result.internals[0].subjects.filter(sub => sub.name === subject);
+            if (filteredSubjects.length > 0) {
+                const subjectResult = {
+                    internal: result._id,
+                    name: filteredSubjects[0].name,
+                    marks: filteredSubjects[0].marks,
+                    classes: filteredSubjects[0].classes,
+                    attendance: filteredSubjects[0].attendance
+                };
+                subjectResults.push(subjectResult);
+            }
+        }
+        if (subjectResults.length === 0) {
+            res.status(404).send(`No internal details found for the subject ${subject} in the given usn and semester`);
+            return;
+        }
+        res.status(200).json(subjectResults);
     }
     catch (err) {
         console.error(err);
