@@ -17,8 +17,9 @@ const accessTokenCookieOptions: CookieOptions = {
     sameSite: 'none',
     secure: true,
     path: '/',
-    domain: 'mad-mini-backend.onrender.com'
+    domain: 'https://mad-mini-backend.onrender.com'
 }
+
 
 const refreshTokenCookieOptions: CookieOptions = {
     ...accessTokenCookieOptions,

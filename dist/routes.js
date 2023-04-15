@@ -15,7 +15,7 @@ const accessTokenCookieOptions = {
     sameSite: 'none',
     secure: true,
     path: '/',
-    domain: 'mad-mini-backend.onrender.com'
+    domain: 'https://mad-mini-backend.onrender.com'
 };
 const refreshTokenCookieOptions = Object.assign(Object.assign({}, accessTokenCookieOptions), { maxAge: 86400000 });
 const routes = (app) => {
