@@ -23,7 +23,7 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-            callbackURL: '/api/sessions/oauth/google',
+            callbackURL: 'https://mad-mini-backend.onrender.com/api/sessions/oauth/google',
         },
         async (accessToken, refreshToken, profile: Profile, done) => {
             try {
