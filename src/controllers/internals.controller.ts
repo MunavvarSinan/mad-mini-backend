@@ -49,11 +49,11 @@ export const getPreviousResults = async (req: Request, res: Response): Promise<v
         let subjectResults = [];
 
         for (const result of previousResults) {
-            const filteredSubjects = result.internals[0].subjects.filter(sub => sub.name === subject);
+            const filteredSubjects = result.internals[0].subjects.filter((sub: any) => sub.name === subject);
             if (filteredSubjects.length > 0) {
                 const subjectResult = {
                     internal: result._id,
-                    name:filteredSubjects[0].name,
+                    name: filteredSubjects[0].name,
                     marks: filteredSubjects[0].marks,
                     classes: filteredSubjects[0].classes,
                     attendance: filteredSubjects[0].attendance

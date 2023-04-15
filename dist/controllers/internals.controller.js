@@ -54,7 +54,7 @@ const getPreviousResults = (req, res) => __awaiter(void 0, void 0, void 0, funct
         }
         let subjectResults = [];
         for (const result of previousResults) {
-            const filteredSubjects = result.internals[0].subjects.filter(sub => sub.name === subject);
+            const filteredSubjects = result.internals[0].subjects.filter((sub) => sub.name === subject);
             if (filteredSubjects.length > 0) {
                 const subjectResult = {
                     internal: result._id,

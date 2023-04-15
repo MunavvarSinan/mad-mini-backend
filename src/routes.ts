@@ -17,7 +17,7 @@ const accessTokenCookieOptions: CookieOptions = {
     sameSite: 'none',
     secure: true,
     path: '/',
-    domain: 'localhost'
+    domain: 'mad-mini-backend.onrender.com'
 }
 
 const refreshTokenCookieOptions: CookieOptions = {
@@ -38,19 +38,23 @@ const routes = (app: Express) => {
         '/api/sessions/oauth/google',
         passport.authenticate('google', { failureRedirect: '/login' }),
         (req, res) => {
-            // Set the access token and refresh token as cookies
-            const { accessToken, refreshToken } = req?.authInfo as AuthInfo;
-            const accessCookie = cookie.serialize('access_token', accessToken, accessTokenCookieOptions);
-            const resfreshCookie = cookie.serialize('refresh_token', refreshToken, refreshTokenCookieOptions);
-            res.setHeader('Set-Cookie', [accessCookie, resfreshCookie]);
-            // const facultyDetails = {
-            //     faculty: JSON.stringify(req.user),
-            //     accessToken,
-            //     refreshToken
-            // }
-            // Send the faculty object as a response on successful sign-in
-            // res.redirect(`${process.env.CLIENT_URL}?faculty=${JSON.stringify(req.user)}?accessToken=${accessToken}?refreshToken=${refreshToken}`);
-            res.redirect(process.env.CLIENT_URL as string);
+            try {
+                // Set the access token and refresh token as cookies
+                const { accessToken, refreshToken } = req?.authInfo as AuthInfo;
+                const accessCookie = cookie.serialize('access_token', accessToken, accessTokenCookieOptions);
+                const resfreshCookie = cookie.serialize('refresh_token', refreshToken, refreshTokenCookieOptions);
+                res.setHeader('Set-Cookie', [accessCookie, resfreshCookie]);
+                // const facultyDetails = {
+                //     faculty: JSON.stringify(req.user),
+                //     accessToken,
+                //     refreshToken
+                // }
+                // Send the faculty object as a response on successful sign-in
+                // res.redirect(`${process.env.CLIENT_URL}?faculty=${JSON.stringify(req.user)}?accessToken=${accessToken}?refreshToken=${refreshToken}`);
+                res.redirect(process.env.CLIENT_URL as string);
+            } catch (err) {
+                console.log(err)
+            }
         }
     );
 

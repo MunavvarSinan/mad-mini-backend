@@ -15,7 +15,7 @@ const accessTokenCookieOptions = {
     sameSite: 'none',
     secure: true,
     path: '/',
-    domain: 'localhost'
+    domain: 'mad-mini-backend.onrender.com'
 };
 const refreshTokenCookieOptions = Object.assign(Object.assign({}, accessTokenCookieOptions), { maxAge: 86400000 });
 const routes = (app) => {
@@ -25,11 +25,16 @@ const routes = (app) => {
     app.post('/faculty/upload', upload.single('excelFile'), faculty_controller_1.uploadData);
     app.get('/auth/google', passport_1.default.authenticate('google', { scope: ['profile', 'email'] }));
     app.get('/api/sessions/oauth/google', passport_1.default.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
-        const { accessToken, refreshToken } = req === null || req === void 0 ? void 0 : req.authInfo;
-        const accessCookie = cookie_1.default.serialize('access_token', accessToken, accessTokenCookieOptions);
-        const resfreshCookie = cookie_1.default.serialize('refresh_token', refreshToken, refreshTokenCookieOptions);
-        res.setHeader('Set-Cookie', [accessCookie, resfreshCookie]);
-        res.redirect(process.env.CLIENT_URL);
+        try {
+            const { accessToken, refreshToken } = req === null || req === void 0 ? void 0 : req.authInfo;
+            const accessCookie = cookie_1.default.serialize('access_token', accessToken, accessTokenCookieOptions);
+            const resfreshCookie = cookie_1.default.serialize('refresh_token', refreshToken, refreshTokenCookieOptions);
+            res.setHeader('Set-Cookie', [accessCookie, resfreshCookie]);
+            res.redirect(process.env.CLIENT_URL);
+        }
+        catch (err) {
+            console.log(err);
+        }
     });
     app.post('/faculty/logout', function (req, res, next) {
         res.clearCookie('access_token', { httpOnly: true });
