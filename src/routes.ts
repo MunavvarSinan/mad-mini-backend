@@ -17,7 +17,7 @@ const accessTokenCookieOptions: CookieOptions = {
     sameSite: 'none',
     secure: true,
     path: '/',
-    domain: 'https://mad-mini-backend.onrender.com'
+    domain: 'localhost'
 }
 
 
