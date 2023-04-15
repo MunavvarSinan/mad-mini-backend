@@ -13,7 +13,6 @@ const accessTokenCookieOptions = {
     maxAge: 3600000,
     httpOnly: true,
     sameSite: 'none',
-    secure: true,
     path: '/',
     domain: 'mad-mini-backend.onrender.com'
 };
