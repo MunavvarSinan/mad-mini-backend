@@ -15,9 +15,9 @@ const accessTokenCookieOptions: CookieOptions = {
     maxAge: 3600000, // 1 hour
     httpOnly: true,
     sameSite: 'none',
-    // secure: true,
+    secure: true,
     path: '/',
-    domain: 'mad-mini-backend.onrender.com'
+    domain: 'localhost'
 }
 
 
@@ -42,14 +42,8 @@ const routes = (app: Express) => {
             try {
                 // Set the access token and refresh token as cookies
                 const { accessToken, refreshToken } = req?.authInfo as AuthInfo;
-                const accessCookie = cookie.serialize('access_token', accessToken, {
-                    ...accessTokenCookieOptions,
-                    domain: req.hostname,
-                });
-                const resfreshCookie = cookie.serialize('refresh_token', refreshToken, {
-                    ...refreshTokenCookieOptions,
-                    domain: req.hostname,
-                });
+                const accessCookie = cookie.serialize('access_token', accessToken, accessTokenCookieOptions);
+                const resfreshCookie = cookie.serialize('refresh_token', refreshToken, refreshTokenCookieOptions);
                 res.setHeader('Set-Cookie', [accessCookie, resfreshCookie]);
                 // const facultyDetails = {
                 //     faculty: JSON.stringify(req.user),

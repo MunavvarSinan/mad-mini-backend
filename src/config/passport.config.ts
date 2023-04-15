@@ -23,10 +23,11 @@ passport.use(
         {
             clientID: process.env.GOOGLE_CLIENT_ID!,
             clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
-            callbackURL: 'https://mad-mini-backend.onrender.com/api/sessions/oauth/google',
+            callbackURL: '/api/sessions/oauth/google',
         },
         async (accessToken, refreshToken, profile: Profile, done) => {
             try {
+                console.log(accessToken)
                 let faculty = await FacultyModel.findOne({ email: profile.emails![0].value });
 
                 if (!faculty) {
