@@ -12,7 +12,7 @@ const upload = (0, multer_1.default)();
 const accessTokenCookieOptions = {
     maxAge: 3600000,
     httpOnly: true,
-    sameSite: 'none',
+    sameSite: 'lax',
     secure: true,
     path: '/',
     domain: 'https://mad-mini-backend.onrender.com'
