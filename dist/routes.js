@@ -10,12 +10,12 @@ const cookie_1 = __importDefault(require("cookie"));
 const internals_controller_1 = require("./controllers/internals.controller");
 const upload = (0, multer_1.default)();
 const accessTokenCookieOptions = {
-    maxAge: 3600000,
-    httpOnly: true,
-    sameSite: 'none',
-    secure: true,
-    path: '/',
-    domain: 'localhost'
+  maxAge: 3600000,
+  httpOnly: true,
+  sameSite: 'none',
+  secure: true,
+  path: '/',
+  domain: 'mad-mini-backend.onrender.com',
 };
 const refreshTokenCookieOptions = Object.assign(Object.assign({}, accessTokenCookieOptions), { maxAge: 86400000 });
 const routes = (app) => {
