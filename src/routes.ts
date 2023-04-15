@@ -42,9 +42,10 @@ const routes = (app: Express) => {
             try {
                 // Set the access token and refresh token as cookies
                 const { accessToken, refreshToken } = req?.authInfo as AuthInfo;
-                const accessCookie = cookie.serialize('access_token', accessToken, accessTokenCookieOptions);
-                const resfreshCookie = cookie.serialize('refresh_token', refreshToken, refreshTokenCookieOptions);
-                res.setHeader('Set-Cookie', [accessCookie, resfreshCookie]);
+                // const accessCookie = cookie.serialize('access_token', accessToken, accessTokenCookieOptions);
+                // const resfreshCookie = cookie.serialize('refresh_token', refreshToken, refreshTokenCookieOptions);
+                // res.setHeader('Set-Cookie', [accessCookie, resfreshCookie]);
+                res.cookie('access_token', accessToken, accessTokenCookieOptions);
                 // const facultyDetails = {
                 //     faculty: JSON.stringify(req.user),
                 //     accessToken,

@@ -11,7 +11,7 @@ import cookieParser from 'cookie-parser';
 const app = express();
 const port = process.env.PORT
 const corsOptions = {
-    origin: '*',
+    origin: process.env.CLIENT_URL as string,
     credentials: true,            //access-control-allow-credentials:true
     optionSuccessStatus: 200
 }

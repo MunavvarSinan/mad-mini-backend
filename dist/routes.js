@@ -6,7 +6,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const multer_1 = __importDefault(require("multer"));
 const faculty_controller_1 = require("./controllers/faculty.controller");
 const passport_1 = __importDefault(require("passport"));
-const cookie_1 = __importDefault(require("cookie"));
 const internals_controller_1 = require("./controllers/internals.controller");
 const upload = (0, multer_1.default)();
 const accessTokenCookieOptions = {
@@ -27,9 +26,7 @@ const routes = (app) => {
     app.get('/api/sessions/oauth/google', passport_1.default.authenticate('google', { failureRedirect: '/login' }), (req, res) => {
         try {
             const { accessToken, refreshToken } = req === null || req === void 0 ? void 0 : req.authInfo;
-            const accessCookie = cookie_1.default.serialize('access_token', accessToken, accessTokenCookieOptions);
-            const resfreshCookie = cookie_1.default.serialize('refresh_token', refreshToken, refreshTokenCookieOptions);
-            res.setHeader('Set-Cookie', [accessCookie, resfreshCookie]);
+            res.cookie('access_token', accessToken, accessTokenCookieOptions);
             res.redirect(process.env.CLIENT_URL);
         }
         catch (err) {

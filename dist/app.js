@@ -25,7 +25,7 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 const corsOptions = {
-    origin: '*',
+    origin: process.env.CLIENT_URL,
     credentials: true,
     optionSuccessStatus: 200
 };
