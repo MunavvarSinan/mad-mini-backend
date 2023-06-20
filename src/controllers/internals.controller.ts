@@ -106,19 +106,19 @@ export const getInternalDetails = async (req: Request, res: Response): Promise<v
 // };
 
 export const getPreviousResults = async (req: Request, res: Response): Promise<void> => {
-    const { usn, semester } = req.body;
+    const { usn, semester, internal } = req.body;
 
     try {
         const previousResults = await InternalDetailsModel.aggregate([
             { $match: { usn: usn } },
             { $unwind: '$internalDetails' },
-            { $match: { 'internalDetails.semester': semester } },
+            { $match: { 'internalDetails.semester': semester, 'internalDetails.internal': internal } },
             { $group: { _id: '$internalDetails.internal', internals: { $push: '$internalDetails' } } },
             { $sort: { '_id': 1 } }
         ]);
 
         if (previousResults.length === 0) {
-            res.status(404).send('No internal details found for the given usn and semester');
+            res.status(404).send(`No internal details found for the given usn, semester, and internal`);
             return;
         }
 
@@ -137,7 +137,7 @@ export const getPreviousResults = async (req: Request, res: Response): Promise<v
         }
 
         if (subjectResults.length === 0) {
-            res.status(404).send(`No internal details found for the given usn and semester`);
+            res.status(404).send(`No internal details found for the given usn, semester, and internal`);
             return;
         }
 
@@ -147,4 +147,3 @@ export const getPreviousResults = async (req: Request, res: Response): Promise<v
         res.status(500).json({ message: 'Internal server error' });
     }
 };
-
