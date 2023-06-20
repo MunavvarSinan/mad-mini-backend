@@ -7,6 +7,8 @@ const multer_1 = __importDefault(require("multer"));
 const faculty_controller_1 = require("./controllers/faculty.controller");
 const passport_1 = __importDefault(require("passport"));
 const internals_controller_1 = require("./controllers/internals.controller");
+const authController_1 = require("./controllers/authController");
+const checkAuth_1 = __importDefault(require("./middlewares/checkAuth"));
 const upload = (0, multer_1.default)();
 const accessTokenCookieOptions = {
     maxAge: 3600000,
@@ -38,8 +40,10 @@ const routes = (app) => {
         res.clearCookie('refresh_token', { httpOnly: true });
         return res.status(200).json({ message: 'Logged out successfully' });
     });
-    app.post('/getInternalDetails', internals_controller_1.getInternalDetails);
-    app.post('/getPreviousResults', internals_controller_1.getPreviousResults);
+    app.post('/getInternalDetails', checkAuth_1.default, internals_controller_1.getInternalDetails);
+    app.post('/getPreviousResults', checkAuth_1.default, internals_controller_1.getPreviousResults);
+    app.post('/login', authController_1.Login);
+    app.post('/authenticate', authController_1.Authenticate);
 };
 exports.default = routes;
 //# sourceMappingURL=routes.js.map

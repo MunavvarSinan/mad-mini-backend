@@ -1,0 +1,147 @@
+
+import { Request, Response } from "express";
+import jwt from 'jsonwebtoken';
+import UserModel from "../models/user.model";
+import nodemailer from 'nodemailer';
+
+const EMAIL_TOKEN_EXPIRATION = 10
+const AUTHENTICATION_EXPIRATION = 24
+
+
+function generateEmailToken() {
+    return Math.floor(1000 + Math.random() * 9000).toString();
+}
+
+const JWT_SECRET = process.env.SESSION_SECRET as string;
+
+function generateAuthToken(tokenId: number): string {
+    const jwtPayload = { tokenId };
+    console.log({ jwtPayload })
+    return jwt.sign(jwtPayload, JWT_SECRET, {
+        algorithm: 'HS256',
+        noTimestamp: true,
+    });
+
+}
+
+export const Login = async (req: Request, res: Response) => {
+    const { email } = req.body;
+    const emailPattern = /^([\d]+[a-z]+[\d]+@yit\.edu\.in)$/;
+
+    // if (!emailPattern.test(email)) {
+    //     res.status(400).json({ message: "Enter a valid email address" });
+    //     return;
+    // }
+
+    try {
+        const emailToken = generateEmailToken();
+        const expiration = new Date(new Date().getTime() + EMAIL_TOKEN_EXPIRATION * 60 * 1000);
+        UserModel.findOne({ email }).then((user) => {
+            if (!user) {
+                const newUser = new UserModel({
+                    email,
+                    tokenType: 'EMAIL',
+                    token: emailToken,
+                    expiration,
+                    valid: true
+                })
+                newUser.save().then((user) => {
+                    res.status(200).json({ message: "Email sent successfully", emailToken: user.token })
+                })
+            } else {
+                user.tokenType = 'EMAIL';
+                user.token = emailToken;
+                user.expiration = expiration;
+                user.valid = true;
+                user.save().then((user) => {
+                    const transporter = nodemailer.createTransport({
+                        service: 'gmail',
+                        auth: {
+                            user: 'munavvarsinan987@gmail.com',
+                            pass: 'lbcibaxivctdhjbd',
+                        },
+                    });
+                    const message = {
+                        from: 'munavvarsinan987@gmail.com',
+                        to: email,
+                        subject: 'OTP Verification',
+                        html: `<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OTP Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333333;
+    }
+
+    h2 {
+      color: #555555;
+    }
+
+    p {
+      color: #555555;
+    }
+
+    .otp {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>OTP Verification</h1>
+  <p>Your One-Time Password (OTP) is:</p>
+  <h2 class="otp">${emailToken}</h2>
+  <p>Please use this OTP to verify your account.</p>
+</body>
+</html>`
+                    }
+                    transporter.sendMail(message, (error, info) => {
+                        if (error) {
+                            console.error(error);
+                        } else {
+                            console.log(info.response);
+                        }
+                    })
+                    res.status(200).json({ message: "Email sent successfully", emailToken: user.token })
+                })
+            }
+        })
+    } catch (error) {
+        res.status(500).json({ message: "Something went wrong" })
+    }
+}
+
+export const Authenticate = async (req: Request, res: Response) => {
+    const { email, token } = req.body;
+    const emailPattern = /^([\d]+[a-z]+[\d]+@yit\.edu\.in)$/;
+
+    // if (!emailPattern.test(email)) {
+    //     res.status(400).json({ message: "Enter a valid email address" });
+    //     return;
+    // }
+
+
+    UserModel.findOne({ email: email, token: token, tokenType: 'EMAIL' }).then((user) => {
+        if (!user) {
+            return res.status(401).json({ message: "Invalid token" })
+        }
+        if (user.expiration < new Date()) {
+            user.valid = false;
+            return res.status(401).json({ message: "Token expired" })
+        }
+        const expiration = new Date(new Date().getTime() + AUTHENTICATION_EXPIRATION * 60 * 60 * 1000);
+        user.tokenType = 'API';
+        user.token = '';
+        user.expiration = expiration;
+        user.save().then((user) => {
+            const authToken = generateAuthToken(user._id);
+            res.status(200).json({ message: "Authenticated successfully", authToken })
+        }
+        )
+    });
+}

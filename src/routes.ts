@@ -5,6 +5,8 @@ import { uploadData } from './controllers/faculty.controller';
 import passport from 'passport';
 import cookie from 'cookie'
 import { getInternalDetails, getPreviousResults } from './controllers/internals.controller';
+import { Authenticate, Login } from './controllers/authController';
+import checkAuthorization from './middlewares/checkAuth';
 const upload = multer();
 
 interface AuthInfo {
@@ -68,8 +70,10 @@ const routes = (app: Express) => {
         return res.status(200).json({ message: 'Logged out successfully' });
 
     });
-    app.post('/getInternalDetails', getInternalDetails);
-    app.post('/getPreviousResults', getPreviousResults);
+    app.post('/getInternalDetails', checkAuthorization, getInternalDetails);
+    app.post('/getPreviousResults', checkAuthorization, getPreviousResults);
+    app.post('/login', Login)
+    app.post('/authenticate', Authenticate);
 }
 
 export default routes

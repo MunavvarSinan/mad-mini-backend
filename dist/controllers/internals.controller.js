@@ -18,19 +18,21 @@ const getInternalDetails = (req, res) => __awaiter(void 0, void 0, void 0, funct
     try {
         const { usn, semester } = req.body;
         console.log(typeof usn, typeof semester);
-        const latestResult = yield internalDetails_model_1.default.aggregate([
-            { $match: { usn: usn, "internalDetails.semester": semester } },
-            { $unwind: "$internalDetails" },
-            { $match: { "internalDetails.semester": semester } },
-            { $sort: { "internalDetails.createdAt": -1 } },
-            { $limit: 1 },
-            { $project: { _id: 0, "internalDetails._id": 0 } }
-        ]);
-        if (latestResult.length === 0) {
-            res.status(404).json({ message: "No internal details found for the given usn and semester" });
+        const userDetails = yield internalDetails_model_1.default.findOne({ usn });
+        if (!userDetails) {
+            res.status(404).json({ message: "No internal details found for the given usn" });
             return;
         }
-        res.json({ internalDetails: latestResult[0].internalDetails });
+        const highestSemester = userDetails.internalDetails.reduce((prev, curr) => {
+            const semesterOrder = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth'];
+            return semesterOrder.indexOf(curr.semester) > semesterOrder.indexOf(prev) ? curr.semester : prev;
+        }, 'First');
+        const highestSemesterResult = userDetails.internalDetails.find(detail => detail.semester === highestSemester);
+        if (!highestSemesterResult) {
+            res.status(404).json({ message: "No internal details found for the highest semester" });
+            return;
+        }
+        res.json({ internalDetails: highestSemesterResult });
     }
     catch (error) {
         console.error(error);
