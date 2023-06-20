@@ -41,7 +41,7 @@ const routes = (app) => {
         return res.status(200).json({ message: 'Logged out successfully' });
     });
     app.post('/getInternalDetails', checkAuth_1.default, internals_controller_1.getInternalDetails);
-    app.post('/getPreviousResults', checkAuth_1.default, internals_controller_1.getPreviousResults);
+    app.post('/getPreviousResults', internals_controller_1.getPreviousResults);
     app.post('/login', authController_1.Login);
     app.post('/authenticate', authController_1.Authenticate);
 };

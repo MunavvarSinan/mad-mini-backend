@@ -71,7 +71,7 @@ const routes = (app: Express) => {
 
     });
     app.post('/getInternalDetails', checkAuthorization, getInternalDetails);
-    app.post('/getPreviousResults', checkAuthorization, getPreviousResults);
+    app.post('/getPreviousResults', getPreviousResults);
     app.post('/login', Login)
     app.post('/authenticate', Authenticate);
 }
