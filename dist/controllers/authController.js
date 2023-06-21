@@ -34,7 +34,7 @@ function generateAuthToken(tokenId) {
 const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
     const studentEmailRegex = /^([\d]+yit+[\d]+@yit\.edu\.in)$/;
-    const facultyEmailRegex = /^([a-z0-9]+@yit\.edu\.in)$/;
+    const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
     if (studentEmailRegex.test(email)) {
         try {
             const emailToken = generateEmailToken();
@@ -46,10 +46,16 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         tokenType: 'EMAIL',
                         token: emailToken,
                         expiration,
-                        valid: true
+                        valid: true,
                     });
                     newUser.save().then((user) => {
-                        res.status(200).json({ message: "Email sent successfully", emailToken: user.token });
+                        res
+                            .status(200)
+                            .json({
+                            message: 'Email sent successfully',
+                            emailToken: user.token,
+                            user: 'STUDENT',
+                        });
                     });
                 }
                 else {
@@ -69,40 +75,7 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             from: 'munavvarsinan987@gmail.com',
                             to: email,
                             subject: 'OTP Verification',
-                            html: `<html>
-<head>
-  <meta charset="UTF-8">
-  <title>OTP Email</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      color: #333333;
-    }
-
-    h2 {
-      color: #555555;
-    }
-
-    p {
-      color: #555555;
-    }
-
-    .otp {
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h1>OTP Verification</h1>
-  <p>Your One-Time Password (OTP) is:</p>
-  <h2 class="otp">${emailToken}</h2>
-  <p>Please use this OTP to verify your account.</p>
-</body>
-</html>`
+                            html: `<html>...</html>`,
                         };
                         transporter.sendMail(message, (error, info) => {
                             if (error) {
@@ -112,14 +85,21 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                                 console.log(info.response);
                             }
                         });
-                        res.status(200).json({ message: "Email sent successfully", emailToken: user.token, user: 'STUDENT' });
+                        res
+                            .status(200)
+                            .json({
+                            message: 'Email sent successfully',
+                            emailToken: user.token,
+                            user: 'STUDENT',
+                        });
                     });
                 }
             });
         }
         catch (error) {
-            res.status(500).json({ message: "Something went wrong" });
+            res.status(500).json({ message: 'Something went wrong' });
         }
+        return;
     }
     if (facultyEmailRegex.test(email)) {
         try {
@@ -132,10 +112,16 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                         tokenType: 'EMAIL',
                         token: emailToken,
                         expiration,
-                        valid: true
+                        valid: true,
                     });
                     newUser.save().then((user) => {
-                        res.status(200).json({ message: "Email sent successfully", emailToken: user.token, user: 'STUDENT' });
+                        res
+                            .status(200)
+                            .json({
+                            message: 'Email sent successfully',
+                            emailToken: user.token,
+                            user: 'FACULTY',
+                        });
                     });
                 }
                 else {
@@ -155,40 +141,7 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                             from: 'munavvarsinan987@gmail.com',
                             to: email,
                             subject: 'OTP Verification',
-                            html: `<html>
-<head>
-  <meta charset="UTF-8">
-  <title>OTP Email</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      color: #333333;
-    }
-
-    h2 {
-      color: #555555;
-    }
-
-    p {
-      color: #555555;
-    }
-
-    .otp {
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h1>OTP Verification</h1>
-  <p>Your One-Time Password (OTP) is:</p>
-  <h2 class="otp">${emailToken}</h2>
-  <p>Please use this OTP to verify your account.</p>
-</body>
-</html>`
+                            html: `<html>...</html>`,
                         };
                         transporter.sendMail(message, (error, info) => {
                             if (error) {
@@ -198,21 +151,29 @@ const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                                 console.log(info.response);
                             }
                         });
-                        res.status(200).json({ message: "Email sent successfully", emailToken: user.token, user: 'FACULTY' });
+                        res
+                            .status(200)
+                            .json({
+                            message: 'Email sent successfully',
+                            emailToken: user.token,
+                            user: 'FACULTY',
+                        });
                     });
                 }
             });
         }
         catch (error) {
-            res.status(500).json({ message: "Something went wrong" });
+            res.status(500).json({ message: 'Something went wrong' });
         }
+        return;
     }
+    res.status(400).json({ message: 'Enter a valid email address' });
 });
 exports.Login = Login;
 const Authenticate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, token } = req.body;
     const studentEmailRegex = /^([\d]+[a-z]+[\d]+@yit\.edu\.in)$/;
-    const facultyEmailRegex = /^([a-z0-9]+@yit\.edu\.in)$/;
+    const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
     if (studentEmailRegex.test(email)) {
         user_model_1.default.findOne({ email: email, token: token, tokenType: 'EMAIL' }).then((user) => {
             if (!user) {
@@ -232,7 +193,7 @@ const Authenticate = (req, res) => __awaiter(void 0, void 0, void 0, function* (
             });
         });
     }
-    if (facultyEmailRegex.test(email)) {
+    else if (facultyEmailRegex.test(email)) {
         faculty_model_1.default.findOne({ email: email, token: token, tokenType: 'EMAIL' }).then((user) => {
             if (!user) {
                 return res.status(401).json({ message: "Invalid token" });

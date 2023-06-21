@@ -24,21 +24,18 @@ function generateAuthToken(tokenId: number): string {
     });
 
 }
-
 export const Login = async (req: Request, res: Response) => {
     const { email } = req.body;
     const studentEmailRegex = /^([\d]+yit+[\d]+@yit\.edu\.in)$/;
-    const facultyEmailRegex = /^([a-z0-9]+@yit\.edu\.in)$/;
-
-    // if (!emailPattern.test(email)) {
-    //     res.status(400).json({ message: "Enter a valid email address" });
-    //     return;
-    // }
+    const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
+    // const facultyEmailRegex = /^([a-z0-9]+@yit\.edu\.in)$/;
 
     if (studentEmailRegex.test(email)) {
         try {
             const emailToken = generateEmailToken();
-            const expiration = new Date(new Date().getTime() + EMAIL_TOKEN_EXPIRATION * 60 * 1000);
+            const expiration = new Date(
+                new Date().getTime() + EMAIL_TOKEN_EXPIRATION * 60 * 1000
+            );
             UserModel.findOne({ email }).then((user) => {
                 if (!user) {
                     const newUser = new UserModel({
@@ -46,11 +43,17 @@ export const Login = async (req: Request, res: Response) => {
                         tokenType: 'EMAIL',
                         token: emailToken,
                         expiration,
-                        valid: true
-                    })
+                        valid: true,
+                    });
                     newUser.save().then((user) => {
-                        res.status(200).json({ message: "Email sent successfully", emailToken: user.token })
-                    })
+                        res
+                            .status(200)
+                            .json({
+                                message: 'Email sent successfully',
+                                emailToken: user.token,
+                                user: 'STUDENT',
+                            });
+                    });
                 } else {
                     user.tokenType = 'EMAIL';
                     user.token = emailToken;
@@ -68,60 +71,37 @@ export const Login = async (req: Request, res: Response) => {
                             from: 'munavvarsinan987@gmail.com',
                             to: email,
                             subject: 'OTP Verification',
-                            html: `<html>
-<head>
-  <meta charset="UTF-8">
-  <title>OTP Email</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      color: #333333;
-    }
-
-    h2 {
-      color: #555555;
-    }
-
-    p {
-      color: #555555;
-    }
-
-    .otp {
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h1>OTP Verification</h1>
-  <p>Your One-Time Password (OTP) is:</p>
-  <h2 class="otp">${emailToken}</h2>
-  <p>Please use this OTP to verify your account.</p>
-</body>
-</html>`
-                        }
+                            html: `<html>...</html>`,
+                        };
                         transporter.sendMail(message, (error, info) => {
                             if (error) {
                                 console.error(error);
                             } else {
                                 console.log(info.response);
                             }
-                        })
-                        res.status(200).json({ message: "Email sent successfully", emailToken: user.token, user: 'STUDENT' })
-                    })
+                        });
+                        res
+                            .status(200)
+                            .json({
+                                message: 'Email sent successfully',
+                                emailToken: user.token,
+                                user: 'STUDENT',
+                            });
+                    });
                 }
-            })
+            });
         } catch (error) {
-            res.status(500).json({ message: "Something went wrong" })
+            res.status(500).json({ message: 'Something went wrong' });
         }
+        return; // Add a return statement here
     }
+
     if (facultyEmailRegex.test(email)) {
         try {
             const emailToken = generateEmailToken();
-            const expiration = new Date(new Date().getTime() + EMAIL_TOKEN_EXPIRATION * 60 * 1000);
+            const expiration = new Date(
+                new Date().getTime() + EMAIL_TOKEN_EXPIRATION * 60 * 1000
+            );
             FacultyModel.findOne({ email }).then((user) => {
                 if (!user) {
                     const newUser = new FacultyModel({
@@ -129,11 +109,17 @@ export const Login = async (req: Request, res: Response) => {
                         tokenType: 'EMAIL',
                         token: emailToken,
                         expiration,
-                        valid: true
-                    })
+                        valid: true,
+                    });
                     newUser.save().then((user) => {
-                        res.status(200).json({ message: "Email sent successfully", emailToken: user.token, user: 'STUDENT' })
-                    })
+                        res
+                            .status(200)
+                            .json({
+                                message: 'Email sent successfully',
+                                emailToken: user.token,
+                                user: 'FACULTY',
+                            });
+                    });
                 } else {
                     user.tokenType = 'EMAIL';
                     user.token = emailToken;
@@ -151,62 +137,41 @@ export const Login = async (req: Request, res: Response) => {
                             from: 'munavvarsinan987@gmail.com',
                             to: email,
                             subject: 'OTP Verification',
-                            html: `<html>
-<head>
-  <meta charset="UTF-8">
-  <title>OTP Email</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      text-align: center;
-    }
-
-    h1 {
-      color: #333333;
-    }
-
-    h2 {
-      color: #555555;
-    }
-
-    p {
-      color: #555555;
-    }
-
-    .otp {
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <h1>OTP Verification</h1>
-  <p>Your One-Time Password (OTP) is:</p>
-  <h2 class="otp">${emailToken}</h2>
-  <p>Please use this OTP to verify your account.</p>
-</body>
-</html>`
-                        }
+                            html: `<html>...</html>`,
+                        };
                         transporter.sendMail(message, (error, info) => {
                             if (error) {
                                 console.error(error);
                             } else {
                                 console.log(info.response);
                             }
-                        })
-                        res.status(200).json({ message: "Email sent successfully", emailToken: user.token, user: 'FACULTY' })
-                    })
+                        });
+                        res
+                            .status(200)
+                            .json({
+                                message: 'Email sent successfully',
+                                emailToken: user.token,
+                                user: 'FACULTY',
+                            });
+                    });
                 }
-            })
+            });
         } catch (error) {
-            res.status(500).json({ message: "Something went wrong" })
+            res.status(500).json({ message: 'Something went wrong' });
         }
+        return; // Add a return statement here
     }
-}
+
+    // Handle the case when the email doesn't match any condition
+    res.status(400).json({ message: 'Enter a valid email address' });
+};
+
 
 export const Authenticate = async (req: Request, res: Response) => {
     const { email, token } = req.body;
     const studentEmailRegex = /^([\d]+[a-z]+[\d]+@yit\.edu\.in)$/;
-    const facultyEmailRegex = /^([a-z0-9]+@yit\.edu\.in)$/;
+    const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
+    // const facultyEmailRegex = /^([a-z0-9]+@yit\.edu\.in)$/;
 
 
     if (studentEmailRegex.test(email)) {
@@ -229,7 +194,7 @@ export const Authenticate = async (req: Request, res: Response) => {
             )
         });
     }
-    if (facultyEmailRegex.test(email)) {
+    else if (facultyEmailRegex.test(email)) {
         FacultyModel.findOne({ email: email, token: token, tokenType: 'EMAIL' }).then((user) => {
             if (!user) {
                 return res.status(401).json({ message: "Invalid token" })
