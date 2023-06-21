@@ -71,7 +71,40 @@ export const Login = async (req: Request, res: Response) => {
                             from: 'munavvarsinan987@gmail.com',
                             to: email,
                             subject: 'OTP Verification',
-                            html: `<html>...</html>`,
+                            html: `<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OTP Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333333;
+    }
+
+    h2 {
+      color: #555555;
+    }
+
+    p {
+      color: #555555;
+    }
+
+    .otp {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>OTP Verification</h1>
+  <p>Your One-Time Password (OTP) is:</p>
+  <h2 class="otp">${emailToken}</h2>
+  <p>Please use this OTP to verify your account.</p>
+</body>
+</html>`,
                         };
                         transporter.sendMail(message, (error, info) => {
                             if (error) {
@@ -137,7 +170,40 @@ export const Login = async (req: Request, res: Response) => {
                             from: 'munavvarsinan987@gmail.com',
                             to: email,
                             subject: 'OTP Verification',
-                            html: `<html>...</html>`,
+                            html: `<html>
+<head>
+  <meta charset="UTF-8">
+  <title>OTP Email</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333333;
+    }
+
+    h2 {
+      color: #555555;
+    }
+
+    p {
+      color: #555555;
+    }
+
+    .otp {
+      font-weight: bold;
+    }
+  </style>
+</head>
+<body>
+  <h1>OTP Verification</h1>
+  <p>Your One-Time Password (OTP) is:</p>
+  <h2 class="otp">${emailToken}</h2>
+  <p>Please use this OTP to verify your account.</p>
+</body>
+</html>`,
                         };
                         transporter.sendMail(message, (error, info) => {
                             if (error) {
