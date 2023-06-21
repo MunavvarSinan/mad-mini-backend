@@ -2,8 +2,10 @@ import mongoose from "mongoose";
 
 export interface IFaculty extends mongoose.Document {
     email: string;
-    name: string;
-    avatar: string;
+    tokenType: String;
+    token: string;
+    valid: boolean;
+    expiration: Date;
     createdAt: Date;
     updatedAt: Date;
 
@@ -15,11 +17,13 @@ const facultySchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    name: {
+
+    tokenType: {
         type: String,
-        required: true,
     },
-    avatar: { type: String },
+    token: { type: String },
+    valid: { type: Boolean },
+    expiration: { type: Date },
 }, {
     timestamps: true
 })

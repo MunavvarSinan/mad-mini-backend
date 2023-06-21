@@ -63,13 +63,13 @@ const routes = (app: Express) => {
         }
     );
 
-
     app.post('/faculty/logout', function (req, res, next) {
         res.clearCookie('access_token', { httpOnly: true }); // clear the access token cookie
         res.clearCookie('refresh_token', { httpOnly: true }); // clear the refresh token cookie
         return res.status(200).json({ message: 'Logged out successfully' });
 
     });
+    app.post('/facultyLogin')
     app.post('/getInternalDetails', checkAuthorization, getInternalDetails);
     app.post('/getPreviousResults', getPreviousResults);
     app.post('/login', Login)

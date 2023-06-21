@@ -40,6 +40,7 @@ const routes = (app) => {
         res.clearCookie('refresh_token', { httpOnly: true });
         return res.status(200).json({ message: 'Logged out successfully' });
     });
+    app.post('/facultyLogin');
     app.post('/getInternalDetails', checkAuth_1.default, internals_controller_1.getInternalDetails);
     app.post('/getPreviousResults', internals_controller_1.getPreviousResults);
     app.post('/login', authController_1.Login);

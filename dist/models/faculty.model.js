@@ -10,11 +10,12 @@ const facultySchema = new mongoose_1.default.Schema({
         required: true,
         unique: true
     },
-    name: {
+    tokenType: {
         type: String,
-        required: true,
     },
-    avatar: { type: String },
+    token: { type: String },
+    valid: { type: Boolean },
+    expiration: { type: Date },
 }, {
     timestamps: true
 });
