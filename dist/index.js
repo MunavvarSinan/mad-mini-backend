@@ -25,22 +25,10 @@ const cookie_parser_1 = __importDefault(require("cookie-parser"));
 const app = (0, express_1.default)();
 const port = process.env.PORT;
 const corsOptions = {
-    origin: '*',
+    origin: '192.168.45.121:19000',
     credentials: true,
-    optionSuccessStatus: 200
 };
 app.use((0, cors_1.default)(corsOptions));
-app.get('*.map', (req, res, next) => {
-    res.set('Content-Type', 'application/json');
-    res.set('Access-Control-Allow-Origin', '*');
-    next();
-});
-app.use(function (req, res, next) {
-    res.header('Access-Control-Allow-Origin', '*');
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
-    next();
-});
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
@@ -49,11 +37,12 @@ app.use((0, express_session_1.default)({
     resave: false,
     saveUninitialized: true,
 }));
+app.use(passport_config_1.default.initialize());
 app.use(passport_config_1.default.session());
+(0, routes_1.default)(app);
 app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     logger_1.default.info(`Server is running on port ${port}`);
     yield (0, connect_1.default)();
-    (0, routes_1.default)(app);
 }));
 exports.default = app;
 //# sourceMappingURL=index.js.map
