@@ -84,30 +84,61 @@ const uploadData = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
                 });
             }
         }
-        internalDetails.forEach((internalDetail) => __awaiter(void 0, void 0, void 0, function* () {
-            console.log(internalDetail.internalDetails);
+        for (const internalDetail of internalDetails) {
             const existingData = yield internalDetails_model_1.default.findOne({
                 usn: internalDetail.usn,
-                "internalDetails.semester": internalDetail.internalDetails[0].semester,
-                "internalDetails.internal": internalDetail.internalDetails[0].internal,
+                'internalDetails.semester': internalDetail.internalDetails[0].semester,
+                'internalDetails.internal': internalDetail.internalDetails[0].internal,
             });
-            const foundDetails = yield internalDetails_model_1.default.findOne({
-                usn: internalDetail.usn
-            });
-            if (existingData) {
-                console.log(`Data for USN ${internalDetail.usn}, semester ${internalDetail.internalDetails[0].semester}, and internal ${internalDetail.internalDetails[0].internal} already exists, skipping...`);
+            try {
+                if (existingData) {
+                    const hasChanges = existingData.internalDetails[0].subjects.some((subject, index) => {
+                        const newSubject = internalDetail.internalDetails[0].subjects[index];
+                        return (subject.marks !== newSubject.marks ||
+                            subject.classes !== newSubject.classes ||
+                            subject.attendance !== newSubject.attendance);
+                    });
+                    if (hasChanges) {
+                        console.log(`Data for USN ${internalDetail.usn}, semester ${internalDetail.internalDetails[0].semester}, and internal ${internalDetail.internalDetails[0].internal} has changes, updating...`);
+                        yield internalDetails_model_1.default.findOneAndUpdate({
+                            usn: internalDetail.usn,
+                            'internalDetails.semester': internalDetail.internalDetails[0].semester,
+                            'internalDetails.internal': internalDetail.internalDetails[0].internal,
+                        }, {
+                            $pull: {
+                                internalDetails: {
+                                    semester: internalDetail.internalDetails[0].semester,
+                                    internal: internalDetail.internalDetails[0].internal,
+                                },
+                            },
+                        });
+                        yield internalDetails_model_1.default.findOneAndUpdate({ usn: internalDetail.usn }, { $push: { internalDetails: { $each: internalDetail.internalDetails } } });
+                    }
+                    else {
+                        console.log(`Data for USN ${internalDetail.usn}, semester ${internalDetail.internalDetails[0].semester}, and internal ${internalDetail.internalDetails[0].internal} already exists and has no changes, skipping...`);
+                    }
+                }
+                else {
+                    const foundDetails = yield internalDetails_model_1.default.findOne({
+                        usn: internalDetail.usn,
+                    });
+                    if (foundDetails) {
+                        yield internalDetails_model_1.default.findOneAndUpdate({ usn: internalDetail.usn }, { $push: { internalDetails: { $each: internalDetail.internalDetails } } });
+                        console.log(`Data for USN ${internalDetail.usn} updated with new internal details`);
+                    }
+                    else {
+                        const newInternalDetails = new internalDetails_model_1.default(internalDetail);
+                        yield newInternalDetails.save();
+                        console.log(`New data for USN ${internalDetail.usn} added`);
+                    }
+                }
             }
-            else if (!existingData && foundDetails) {
-                yield internalDetails_model_1.default.findOneAndUpdate({ usn: internalDetail.usn }, { $push: { internalDetails: { $each: internalDetail.internalDetails } } });
-                console.log(`Data for USN ${internalDetail.usn} updated with new internal details`);
+            catch (error) {
+                console.error('An error occurred while updating the document:', error);
+                return res.status(500).json({ msg: 'Error uploading file' });
             }
-            else {
-                const newInternalDetails = new internalDetails_model_1.default(internalDetail);
-                yield newInternalDetails.save();
-                console.log(`New data for USN ${internalDetail.usn} added`);
-            }
-        }));
-        res.send('All files uploaded successfully');
+        }
+        res.send('All files uploaded and updated successfully');
     }
     catch (error) {
         console.error(error);
