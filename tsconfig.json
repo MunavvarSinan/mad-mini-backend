@@ -38,6 +38,7 @@
     "node_modules"
   ],
   "include": [
+    "./api/**/*.ts",
     "./src/**/*.tsx",
     "./src/**/*.ts",
     "./**/*.d.ts",

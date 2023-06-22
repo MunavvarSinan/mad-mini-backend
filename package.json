@@ -10,7 +10,8 @@
   "scripts": {
     "watch": "tsc -w",
     "start": "node dist/app.js",
-    "dev": "nodemon dist/app.js"
+    "dev": "nodemon dist/app.js",
+    "vercel-build": "echo hello"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

@@ -16,6 +16,11 @@ const corsOptions = {
     optionSuccessStatus: 200
 }
 app.use(cors(corsOptions));
+app.get('*.map', (req, res, next) => {
+    res.set('Content-Type', 'application/json');
+    res.set('Access-Control-Allow-Origin', '*');
+    next();
+});
 app.use(bodyParser.json()); // Parse JSON request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -40,3 +45,5 @@ app.listen(port, async () => {
     await connect();
     routes(app);
 })
+
+export default app;
