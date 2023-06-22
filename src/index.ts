@@ -12,7 +12,7 @@ import cookieParser from 'cookie-parser';
 const app = express();
 const port = process.env.PORT;
 const corsOptions = {
-    origin: '192.168.45.121:19000',
+    origin: 'http://192.168.45.121:19000',
     credentials: true,
 };
 app.use(cors(corsOptions)); // Enable CORS for all routes
