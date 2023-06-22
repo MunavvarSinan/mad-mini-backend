@@ -21,6 +21,14 @@ app.get('*.map', (req, res, next) => {
     res.set('Access-Control-Allow-Origin', '*');
     next();
 });
+
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*'); // Allow requests from any origin
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE'); // Allow the HTTP methods you need
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept'); // Allow the headers you need
+    next();
+});
+
 app.use(bodyParser.json()); // Parse JSON request bodies
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());

@@ -69,7 +69,6 @@ const routes = (app: Express) => {
         return res.status(200).json({ message: 'Logged out successfully' });
 
     });
-    app.post('/facultyLogin')
     app.post('/getInternalDetails', checkAuthorization, getInternalDetails);
     app.post('/getPreviousResults', getPreviousResults);
     app.post('/login', Login)

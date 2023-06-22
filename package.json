@@ -1,7 +1,7 @@
 {
   "name": "mad-mini-backend",
   "version": "1.0.0",
-  "main": "dist/app.js",
+  "main": "dist/index.js",
   "engines": {
     "node": ">=14"
   },
@@ -9,8 +9,8 @@
   "license": "MIT",
   "scripts": {
     "watch": "tsc -w",
-    "start": "node dist/app.js",
-    "dev": "nodemon dist/app.js",
+    "start": "node dist/index.js",
+    "dev": "nodemon dist/index.js",
     "vercel-build": "echo hello"
   },
   "devDependencies": {

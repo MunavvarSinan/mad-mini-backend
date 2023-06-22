@@ -30,6 +30,17 @@ const corsOptions = {
     optionSuccessStatus: 200
 };
 app.use((0, cors_1.default)(corsOptions));
+app.get('*.map', (req, res, next) => {
+    res.set('Content-Type', 'application/json');
+    res.set('Access-Control-Allow-Origin', '*');
+    next();
+});
+app.use(function (req, res, next) {
+    res.header('Access-Control-Allow-Origin', '*');
+    res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+    next();
+});
 app.use(body_parser_1.default.json());
 app.use(body_parser_1.default.urlencoded({ extended: true }));
 app.use((0, cookie_parser_1.default)());
@@ -44,4 +55,5 @@ app.listen(port, () => __awaiter(void 0, void 0, void 0, function* () {
     yield (0, connect_1.default)();
     (0, routes_1.default)(app);
 }));
-//# sourceMappingURL=app.js.map
+exports.default = app;
+//# sourceMappingURL=index.js.map
