@@ -27,8 +27,8 @@ function generateAuthToken(tokenId: number): string {
 export const Login = async (req: Request, res: Response) => {
     const { email } = req.body;
     const studentEmailRegex = /^([\d]+yit+[\d]+@yit\.edu\.in)$/;
-    const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
-    // const facultyEmailRegex = /^([a-z0-9]+@yit\.edu\.in)$/;
+    // const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
+    const facultyEmailRegex = /^([A-Za-z0-9]+@yit\.edu\.in)$/;
 
     if (studentEmailRegex.test(email)) {
         try {
@@ -236,8 +236,8 @@ export const Login = async (req: Request, res: Response) => {
 export const Authenticate = async (req: Request, res: Response) => {
     const { email, token } = req.body;
     const studentEmailRegex = /^([\d]+[a-z]+[\d]+@yit\.edu\.in)$/;
-    const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
-    // const facultyEmailRegex = /^([a-z0-9]+@yit\.edu\.in)$/;
+    // const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
+    const facultyEmailRegex = /^([A-Za-z0-9]+@yit\.edu\.in)$/;
 
 
     if (studentEmailRegex.test(email)) {
