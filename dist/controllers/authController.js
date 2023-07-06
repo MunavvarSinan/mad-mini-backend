@@ -34,7 +34,7 @@ function generateAuthToken(tokenId) {
 const Login = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email } = req.body;
     const studentEmailRegex = /^([\d]+yit+[\d]+@yit\.edu\.in)$/;
-    const facultyEmailRegex = /^([A-Za-z0-9]+@yit\.edu\.in)$/;
+    const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
     if (studentEmailRegex.test(email)) {
         try {
             const emailToken = generateEmailToken();
@@ -239,7 +239,7 @@ exports.Login = Login;
 const Authenticate = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     const { email, token } = req.body;
     const studentEmailRegex = /^([\d]+[a-z]+[\d]+@yit\.edu\.in)$/;
-    const facultyEmailRegex = /^([A-Za-z0-9]+@yit\.edu\.in)$/;
+    const facultyEmailRegex = /^([a-z0-9]+@gmail\.com)$/;
     if (studentEmailRegex.test(email)) {
         user_model_1.default.findOne({ email: email, token: token, tokenType: 'EMAIL' }).then((user) => {
             if (!user) {

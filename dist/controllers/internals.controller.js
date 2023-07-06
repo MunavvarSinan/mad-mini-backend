@@ -15,18 +15,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPreviousResults = exports.getInternalDetails = void 0;
 const internalDetails_model_1 = __importDefault(require("../models/internalDetails.model"));
 const getInternalDetails = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+    const { usn, semester } = req.body;
     try {
-        const { usn, semester } = req.body;
-        console.log(typeof usn, typeof semester);
-        const userDetails = yield internalDetails_model_1.default.findOne({ usn });
+        const userDetails = yield internalDetails_model_1.default.findOne({ usn }).sort({ 'internalDetails.semester': -1 });
         if (!userDetails) {
-            res.status(404).json({ message: "No internal details found for the given usn" });
+            res.status(404).json({ message: "No internal details found for the given USN" });
             return;
         }
-        const highestSemester = userDetails.internalDetails.reduce((prev, curr) => {
-            const semesterOrder = ['First', 'Second', 'Third', 'Fourth', 'Fifth', 'Sixth', 'Seventh', 'Eighth'];
-            return semesterOrder.indexOf(curr.semester) > semesterOrder.indexOf(prev) ? curr.semester : prev;
-        }, 'First');
+        const highestSemester = userDetails.internalDetails[0].semester;
         const highestSemesterResult = userDetails.internalDetails.find(detail => detail.semester === highestSemester);
         if (!highestSemesterResult) {
             res.status(404).json({ message: "No internal details found for the highest semester" });

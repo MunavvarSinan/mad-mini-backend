@@ -85,19 +85,20 @@ const uploadData = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
             }
         }
         for (const internalDetail of internalDetails) {
-            const existingData = yield internalDetails_model_1.default.findOne({
-                usn: internalDetail.usn,
-                'internalDetails.semester': internalDetail.internalDetails[0].semester,
-                'internalDetails.internal': internalDetail.internalDetails[0].internal,
-            });
             try {
+                const existingData = yield internalDetails_model_1.default.findOne({
+                    usn: internalDetail.usn,
+                    'internalDetails.semester': internalDetail.internalDetails[0].semester,
+                    'internalDetails.internal': internalDetail.internalDetails[0].internal,
+                });
                 if (existingData) {
-                    const hasChanges = existingData.internalDetails[0].subjects.some((subject, index) => {
+                    const hasChanges = existingData.internalDetails[0].subjects.reduce((hasChanges, subject, index) => {
                         const newSubject = internalDetail.internalDetails[0].subjects[index];
-                        return (subject.marks !== newSubject.marks ||
+                        return (hasChanges ||
+                            subject.marks !== newSubject.marks ||
                             subject.classes !== newSubject.classes ||
                             subject.attendance !== newSubject.attendance);
-                    });
+                    }, false);
                     if (hasChanges) {
                         console.log(`Data for USN ${internalDetail.usn}, semester ${internalDetail.internalDetails[0].semester}, and internal ${internalDetail.internalDetails[0].internal} has changes, updating...`);
                         yield internalDetails_model_1.default.findOneAndUpdate({

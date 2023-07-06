@@ -81,22 +81,96 @@ export const uploadData = async (req: Request, res: Response) => {
             }
         }
 
+        // for (const internalDetail of internalDetails) {
+        //     const existingData: InternalDetails | null = await InternalDetailsModel.findOne({
+        //         usn: internalDetail.usn,
+        //         'internalDetails.semester': internalDetail.internalDetails[0].semester,
+        //         'internalDetails.internal': internalDetail.internalDetails[0].internal,
+        //     });
+        //     try {
+        //         if (existingData) {
+        //             const hasChanges = existingData.internalDetails[0].subjects.reduce((hasChanges, subject, index) => {
+        //                 const newSubject = internalDetail.internalDetails[0].subjects[index];
+        //                 return (
+        //                     hasChanges ||
+        //                     subject.marks !== newSubject.marks ||
+        //                     subject.classes !== newSubject.classes ||
+        //                     subject.attendance !== newSubject.attendance
+        //                 );
+        //             }, false);
+
+        //             if (hasChanges) {
+        //                 console.log(
+        //                     `Data for USN ${internalDetail.usn}, semester ${internalDetail.internalDetails[0].semester}, and internal ${internalDetail.internalDetails[0].internal} has changes, updating...`
+        //                 );
+
+        //                 await InternalDetailsModel.findOneAndUpdate(
+        //                     {
+        //                         usn: internalDetail.usn,
+        //                         'internalDetails.semester': internalDetail.internalDetails[0].semester,
+        //                         'internalDetails.internal': internalDetail.internalDetails[0].internal,
+        //                     },
+        //                     {
+        //                         $pull: {
+        //                             internalDetails: {
+        //                                 semester: internalDetail.internalDetails[0].semester,
+        //                                 internal: internalDetail.internalDetails[0].internal,
+        //                             },
+        //                         },
+        //                     }
+        //                 );
+
+        //                 await InternalDetailsModel.findOneAndUpdate(
+        //                     { usn: internalDetail.usn },
+        //                     { $push: { internalDetails: { $each: internalDetail.internalDetails } } }
+        //                 );
+        //             } else {
+        //                 console.log(
+        //                     `Data for USN ${internalDetail.usn}, semester ${internalDetail.internalDetails[0].semester}, and internal ${internalDetail.internalDetails[0].internal} already exists and has no changes, skipping...`
+        //                 );
+        //             }
+        //         }
+        //         else {
+        //             const foundDetails: InternalDetails | null = await InternalDetailsModel.findOne({
+        //                 usn: internalDetail.usn,
+        //             });
+
+        //             if (foundDetails) {
+        //                 await InternalDetailsModel.findOneAndUpdate(
+        //                     { usn: internalDetail.usn },
+        //                     { $push: { internalDetails: { $each: internalDetail.internalDetails } } }
+        //                 );
+        //                 console.log(`Data for USN ${internalDetail.usn} updated with new internal details`);
+        //             } else {
+        //                 const newInternalDetails = new InternalDetailsModel(internalDetail);
+        //                 await newInternalDetails.save();
+        //                 console.log(`New data for USN ${internalDetail.usn} added`);
+        //             }
+        //         }
+        //     } catch (error: any) {
+        //         console.error('An error occurred while updating the document:', error);
+
+        //         return res.status(500).json({ msg: 'Error uploading file' });
+        //     }
+        // }
         for (const internalDetail of internalDetails) {
-            const existingData: InternalDetails | null = await InternalDetailsModel.findOne({
-                usn: internalDetail.usn,
-                'internalDetails.semester': internalDetail.internalDetails[0].semester,
-                'internalDetails.internal': internalDetail.internalDetails[0].internal,
-            });
             try {
+                const existingData: InternalDetails | null = await InternalDetailsModel.findOne({
+                    usn: internalDetail.usn,
+                    'internalDetails.semester': internalDetail.internalDetails[0].semester,
+                    'internalDetails.internal': internalDetail.internalDetails[0].internal,
+                });
+
                 if (existingData) {
-                    const hasChanges = existingData.internalDetails[0].subjects.some((subject, index) => {
+                    const hasChanges = existingData.internalDetails[0].subjects.reduce((hasChanges, subject, index) => {
                         const newSubject = internalDetail.internalDetails[0].subjects[index];
                         return (
+                            hasChanges ||
                             subject.marks !== newSubject.marks ||
                             subject.classes !== newSubject.classes ||
                             subject.attendance !== newSubject.attendance
                         );
-                    });
+                    }, false);
 
                     if (hasChanges) {
                         console.log(
@@ -128,8 +202,7 @@ export const uploadData = async (req: Request, res: Response) => {
                             `Data for USN ${internalDetail.usn}, semester ${internalDetail.internalDetails[0].semester}, and internal ${internalDetail.internalDetails[0].internal} already exists and has no changes, skipping...`
                         );
                     }
-                }
-                else {
+                } else {
                     const foundDetails: InternalDetails | null = await InternalDetailsModel.findOne({
                         usn: internalDetail.usn,
                     });
@@ -148,7 +221,6 @@ export const uploadData = async (req: Request, res: Response) => {
                 }
             } catch (error: any) {
                 console.error('An error occurred while updating the document:', error);
-
                 return res.status(500).json({ msg: 'Error uploading file' });
             }
         }
